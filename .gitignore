@@ -1,0 +1,28 @@
+# Python 缓存与字节码
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# PyInstaller 构建产物
+build/
+dist/
+*.spec.bak
+*.exe
+
+# 运行时生成的数据（快照/日志/报告在用户 LOCALAPPDATA，不入库）
+
+# 编辑器与系统
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.tmp
+*.log

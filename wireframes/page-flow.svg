@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="360" viewBox="0 0 1120 360">
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#6B7280"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1120" height="360" fill="#FFFFFF"/>
+  <text x="24" y="32" font-family="sans-serif" font-size="16" font-weight="bold" fill="#374151">NetFix 页面流转图（含跳转条件与返回路径）</text>
+
+  <g font-family="sans-serif" font-size="13" fill="#374151">
+    <rect x="24" y="70" width="150" height="56" rx="6" fill="#F3F4F6" stroke="#9CA3AF"/>
+    <text x="99" y="94" text-anchor="middle">P-01 主界面</text><text x="99" y="113" text-anchor="middle" font-size="11" fill="#6B7280">一键体检</text>
+
+    <rect x="230" y="70" width="140" height="56" rx="6" fill="#FFFFFF" stroke="#9CA3AF" stroke-dasharray="4 3"/>
+    <text x="300" y="94" text-anchor="middle">体检进行中</text><text x="300" y="113" text-anchor="middle" font-size="11" fill="#6B7280">只读扫描</text>
+
+    <rect x="426" y="70" width="150" height="56" rx="6" fill="#F3F4F6" stroke="#9CA3AF"/>
+    <text x="501" y="94" text-anchor="middle">体检结果</text><text x="501" y="113" text-anchor="middle" font-size="11" fill="#6B7280">异常高亮</text>
+
+    <rect x="632" y="70" width="150" height="56" rx="6" fill="#F3F4F6" stroke="#2563EB" stroke-width="2"/>
+    <text x="707" y="94" text-anchor="middle">P-02 修复确认</text><text x="707" y="113" text-anchor="middle" font-size="11" fill="#6B7280">备份+勾选</text>
+
+    <rect x="838" y="70" width="140" height="56" rx="6" fill="#FFFFFF" stroke="#9CA3AF" stroke-dasharray="4 3"/>
+    <text x="908" y="94" text-anchor="middle">修复执行中</text><text x="908" y="113" text-anchor="middle" font-size="11" fill="#6B7280">事务式写入</text>
+
+    <rect x="978" y="200" width="120" height="56" rx="6" fill="#F3F4F6" stroke="#9CA3AF"/>
+    <text x="1038" y="224" text-anchor="middle">P-03 修复结果</text><text x="1038" y="243" text-anchor="middle" font-size="11" fill="#6B7280">连通性自检</text>
+
+    <g stroke="#6B7280" stroke-width="1.5" marker-end="url(#a)" fill="none">
+      <line x1="174" y1="98" x2="226" y2="98"/>
+      <line x1="370" y1="98" x2="422" y2="98"/>
+      <line x1="576" y1="98" x2="628" y2="98"/>
+      <line x1="782" y1="98" x2="834" y2="98"/>
+      <path d="M978,98 L1038,98 L1038,196"/>
+    </g>
+    <g font-size="10.5" fill="#6B7280">
+      <text x="180" y="90">点击体检</text><text x="376" y="90">完成</text><text x="582" y="90">一键修复</text><text x="788" y="90">确认</text><text x="960" y="160">完成</text>
+    </g>
+
+    <g stroke="#6B7280" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#a)" fill="none">
+      <path d="M978,228 L560,228 L560,132"/>
+    </g>
+    <rect x="620" y="214" width="230" height="26" rx="4" fill="#EEF2F7" stroke="#E5E7EB"/>
+    <text x="735" y="231" text-anchor="middle" font-size="11" fill="#374151">回滚到快照 → 返回主界面</text>
+
+    <g stroke="#6B7280" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#a)" fill="none">
+      <path d="M99,126 L99,290 L707,290 L707,128"/>
+    </g>
+    <rect x="300" y="278" width="230" height="26" rx="4" fill="#EEF2F7" stroke="#E5E7EB"/>
+    <text x="415" y="295" text-anchor="middle" font-size="11" fill="#374151">P-02 取消 → 返回主界面</text>
+
+    <path d="M24,300 L24,150" stroke="#6B7280" stroke-width="1.3" stroke-dasharray="5 4" fill="none" marker-end="url(#a)"/>
+    <rect x="20" y="310" width="300" height="26" rx="4" fill="#EEF2F7" stroke="#E5E7EB"/>
+    <text x="170" y="327" text-anchor="middle" font-size="11" fill="#374151">P-01 → 多因素知识说明 → 返回</text>
+
+    <rect x="978" y="278" width="120" height="26" rx="4" fill="#EEF2F7" stroke="#E5E7EB"/>
+    <text x="1038" y="295" text-anchor="middle" font-size="10" fill="#374151">导出 HTML/TXT 报告</text>
+  </g>
+
+  <rect x="16" y="342" width="1088" height="0" fill="none"/>
+  <rect x="16" y="338" width="1088" height="16" fill="#F9FAFB" stroke="#E5E7EB"/>
+  <text x="28" y="350" font-family="sans-serif" font-size="11" fill="#6B7280">原型设计作者 · 微信号：TheSun_Also_Rises</text>
+</svg>

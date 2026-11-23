@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>NetFix 网络异常修复工具 图标</title>
+  <desc>盾牌轮廓内，一条断开的链路被青绿色对勾桥接，寓意断网修复重连</desc>
+  <!-- background: 圆角方形底 -->
+  <g id="background">
+    <rect width="512" height="512" rx="104" fill="#3B6EA8"/>
+  </g>
+  <!-- main: 盾牌轮廓 -->
+  <g id="main">
+    <path d="M256 84 L388 134 V244 C388 330 330 392 256 424 C182 392 124 330 124 244 V134 Z"
+          fill="none" stroke="#FFFFFF" stroke-width="26" stroke-linejoin="round" opacity="0.95"/>
+  </g>
+  <!-- accent: 断开重连的链路 + 对勾 -->
+  <g id="accent">
+    <!-- 左段链路 -->
+    <line x1="174" y1="258" x2="222" y2="258" stroke="#FFFFFF" stroke-width="20" stroke-linecap="round" opacity="0.85"/>
+    <!-- 右段链路 -->
+    <line x1="290" y1="258" x2="338" y2="258" stroke="#FFFFFF" stroke-width="20" stroke-linecap="round" opacity="0.85"/>
+    <!-- 桥接对勾 -->
+    <path d="M214 262 L242 290 L300 226" fill="none" stroke="#5EEAD4" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

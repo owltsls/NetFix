@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NetFix 网络异常修复工具 — 原型线稿</title>
+<style>
+  :root{
+    --wf-line:#9CA3AF; --wf-placeholder:#E5E7EB; --wf-text:#374151;
+    --wf-accent:#2563EB; --wf-fill:#F3F4F6; --wf-subtle:#FAFAFA;
+    --ok:#0D9488; --warn:#D97706; --err:#C0392B;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;color:#1F2937;background:#EEF1F6;padding:24px}
+  .page{max-width:1360px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:#6B7280;font-size:13px;margin-bottom:20px}
+  .flow-card,.board,.note-card{background:#fff;border:1px solid #E5E7EB;border-radius:10px;margin-bottom:22px;overflow:hidden}
+  .card-title{font-size:14px;font-weight:600;padding:12px 16px;background:#F8FAFC;border-bottom:1px solid #E5E7EB}
+  .flow-wrap{padding:16px;overflow-x:auto}
+  .boards{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+  @media(max-width:1100px){.boards{grid-template-columns:1fr}}
+  .board-caption{font-size:13px;font-weight:600;padding:10px 14px;background:#F8FAFC;border-bottom:1px solid #E5E7EB;display:flex;justify-content:space-between}
+  .board-caption span:last-child{color:#6B7280;font-weight:400}
+  .canvas{width:100%;aspect-ratio:1280/800;background:#fff;position:relative}
+  .wf{border:1px solid var(--wf-line)}
+  .wf-titlebar{height:44px;background:var(--wf-fill);border-bottom:1px solid var(--wf-line);display:flex;align-items:center;padding:0 18px;gap:12px}
+  .wf-dot{width:10px;height:10px;border-radius:50%;background:#D1D5DB}
+  .wf-logo{width:150px;height:14px;background:#CBD5E1;border-radius:2px}
+  .wf-body{display:flex;height:calc(100% - 44px)}
+  .wf-side{width:200px;border-right:1px solid var(--wf-line);background:var(--wf-subtle);padding:18px 14px}
+  .wf-side .nav{height:14px;background:#D1D5DB;border-radius:2px;margin-bottom:16px}
+  .wf-side .nav.active{background:var(--wf-accent);opacity:.75}
+  .wf-main{flex:1;padding:22px 24px;display:flex;flex-direction:column;gap:14px}
+  .wf-h{height:20px;width:46%;background:#9CA3AF;border-radius:2px}
+  .wf-subline{height:12px;width:70%;background:#E5E7EB;border-radius:2px}
+  .btnrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .btn{min-height:36px;padding:0 20px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+  .btn-primary{background:var(--wf-accent);color:#fff}
+  .btn-ghost{border:1px solid var(--wf-line);background:#fff;color:var(--wf-text)}
+  .btn-danger{border:1px solid var(--err);color:var(--err);background:#fff}
+  .scanlist{border:1px solid var(--wf-line);display:flex;flex-direction:column}
+  .scanrow{display:flex;align-items:center;gap:12px;padding:9px 12px;border-bottom:1px solid #E5E7EB;font-size:12px;color:var(--wf-text)}
+  .scanrow:last-child{border-bottom:none}
+  .scanrow .dot{width:12px;height:12px;border-radius:50%;flex:none}
+  .dot-ok{background:var(--ok)} .dot-warn{background:var(--warn)} .dot-err{background:var(--err)}
+  .scanrow .bar{height:10px;background:var(--wf-placeholder);border-radius:2px;flex:1;max-width:220px}
+  .scanrow .badge{margin-left:auto;font-size:11px;padding:2px 8px;border-radius:10px;color:#fff}
+  .badge-ok{background:var(--ok)} .badge-warn{background:var(--warn)} .badge-err{background:var(--err)}
+  .progress{height:8px;background:var(--wf-placeholder);border-radius:4px;overflow:hidden}
+  .progress i{display:block;height:100%;width:62%;background:var(--wf-accent)}
+  .checkline{display:flex;gap:10px;align-items:flex-start;font-size:12px;color:var(--wf-text);margin-bottom:9px;line-height:1.45}
+  .chk{width:15px;height:15px;border:1px solid var(--wf-line);border-radius:3px;flex:none;margin-top:1px}
+  .chk.on{background:var(--wf-accent);border-color:var(--wf-accent)}
+  .banner{border:1px dashed var(--warn);background:#FFFBEB;color:#92400E;font-size:12px;padding:10px 12px;border-radius:4px}
+  .result-hero{display:flex;align-items:center;gap:14px}
+  .result-icon{width:44px;height:44px;border-radius:50%;background:var(--ok);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px}
+  .kv{font-size:12px;color:#6B7280}
+  .marker{position:absolute;width:22px;height:22px;border-radius:50%;background:var(--wf-accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px #fff}
+  .note-table{width:100%;border-collapse:collapse;font-size:13px}
+  .note-table th,.note-table td{border:1px solid #E5E7EB;padding:9px 12px;text-align:left;vertical-align:top}
+  .note-table th{background:#F8FAFC;font-weight:600}
+  .note-wrap{padding:0;overflow-x:auto}
+  footer{border-top:1px solid #E5E7EB;padding:14px 16px;font-size:12px;color:#6B7280;text-align:center;background:#F9FAFB}
+  .svg-flow{width:100%;height:auto;display:block}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>NetFix 网络异常修复工具 · 低保真线稿</h1>
+  <div class="sub">桌面端 1280×800 · 灰阶结构图 · 强调色仅用于标注编号与异常态 · 作者署名见页脚</div>
+
+  <!-- 流转图 -->
+  <div class="flow-card">
+    <div class="card-title">页面流转图（跳转条件与返回路径）</div>
+    <div class="flow-wrap">
+      <svg class="svg-flow" viewBox="0 0 1240 210" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arw" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#6B7280"/>
+          </marker>
+        </defs>
+        <g font-family="-apple-system,Segoe UI,Microsoft YaHei,sans-serif" font-size="13" fill="#374151">
+          <rect x="10" y="30" width="150" height="52" rx="6" fill="#F3F4F6" stroke="#9CA3AF"/>
+          <text x="85" y="52" text-anchor="middle">P-01 主界面</text><text x="85" y="70" text-anchor="middle" font-size="11" fill="#6B7280">一键体检入口</text>
+          <rect x="220" y="30" width="130" height="52" rx="6" fill="#fff" stroke="#9CA3AF" stroke-dasharray="4 3"/>
+          <text x="285" y="52" text-anchor="middle">体检进行中</text><text x="285" y="70" text-anchor="middle" font-size="11" fill="#6B7280">只读扫描</text>
+          <rect x="410" y="30" width="150" height="52" rx="6" fill="#F3F4F6" stroke="#9CA3AF"/>
+          <text x="485" y="52" text-anchor="middle">体检结果</text><text x="485" y="70" text-anchor="middle" font-size="11" fill="#6B7280">异常项高亮</text>
+          <rect x="620" y="30" width="160" height="52" rx="6" fill="#F3F4F6" stroke="#2563EB" stroke-width="2"/>
+          <text x="700" y="52" text-anchor="middle">P-02 修复确认</text><text x="700" y="70" text-anchor="middle" font-size="11" fill="#6B7280">自动备份+勾选</text>
+          <rect x="840" y="30" width="150" height="52" rx="6" fill="#fff" stroke="#9CA3AF" stroke-dasharray="4 3"/>
+          <text x="915" y="52" text-anchor="middle">修复执行中</text><text x="915" y="70" text-anchor="middle" font-size="11" fill="#6B7280">事务式写入</text>
+          <rect x="1050" y="30" width="180" height="52" rx="6" fill="#F3F4F6" stroke="#9CA3AF"/>
+          <text x="1140" y="52" text-anchor="middle">P-03 修复结果</text><text x="1140" y="70" text-anchor="middle" font-size="11" fill="#6B7280">连通性自检</text>
+          <g stroke="#6B7280" stroke-width="1.5" marker-end="url(#arw)" fill="none">
+            <line x1="160" y1="56" x2="214" y2="56"/>
+            <line x1="350" y1="56" x2="404" y2="56"/>
+            <line x1="560" y1="56" x2="614" y2="56"/>
+            <line x1="780" y1="56" x2="834" y2="56"/>
+            <line x1="990" y1="56" x2="1044" y2="56"/>
+          </g>
+          <g font-size="11" fill="#6B7280">
+            <text x="170" y="48">点击体检</text><text x="360" y="48">完成</text><text x="566" y="48">一键修复</text><text x="786" y="48">确认</text><text x="996" y="48">完成</text>
+          </g>
+          <!-- 返回路径 -->
+          <g stroke="#6B7280" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#arw)" fill="none">
+            <path d="M1140,82 L1140,150 L85,150 L85,84"/>
+          </g>
+          <rect x="500" y="138" width="230" height="24" rx="4" fill="#EEF2F7" stroke="#E5E7EB"/>
+          <text x="615" y="154" text-anchor="middle" font-size="11" fill="#374151">回滚到快照 / 导出报告 → 返回主界面</text>
+          <rect x="10" y="102" width="220" height="24" rx="4" fill="#EEF2F7" stroke="#E5E7EB"/>
+          <text x="120" y="118" text-anchor="middle" font-size="11" fill="#374151">P-01 → 多因素知识说明 → 返回</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="boards">
+    <!-- P-01 -->
+    <div class="board">
+      <div class="board-caption"><span>P-01　主界面 / 一键体检</span><span>1280×800 · 正常态</span></div>
+      <div class="canvas wf">
+        <div class="marker" style="top:70px;right:14px">1</div>
+        <div class="marker" style="top:250px;right:14px">2</div>
+        <div class="wf-titlebar"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-logo" style="margin-left:8px"></div></div>
+        <div class="wf-body">
+          <div class="wf-side">
+            <div class="nav active"></div><div class="nav"></div><div class="nav"></div><div class="nav"></div>
+          </div>
+          <div class="wf-main">
+            <div class="wf-h"></div>
+            <div class="wf-subline"></div>
+            <div class="btnrow" style="margin:4px 0">
+              <div class="btn btn-primary">一键体检</div>
+              <div class="btn btn-ghost">查看网络通道说明</div>
+            </div>
+            <div class="scanlist">
+              <div class="scanrow"><span class="dot dot-ok"></span><span style="width:120px">系统代理 WinINET</span><span class="bar"></span><span class="badge badge-ok">正常</span></div>
+              <div class="scanrow"><span class="dot dot-err"></span><span style="width:120px">WinHTTP 代理</span><span class="bar"></span><span class="badge badge-err">异常</span></div>
+              <div class="scanrow"><span class="dot dot-warn"></span><span style="width:120px">环境变量代理</span><span class="bar"></span><span class="badge badge-warn">注意</span></div>
+              <div class="scanrow"><span class="dot dot-ok"></span><span style="width:120px">DNS 配置</span><span class="bar"></span><span class="badge badge-ok">正常</span></div>
+              <div class="scanrow"><span class="dot dot-ok"></span><span style="width:120px">hosts 文件</span><span class="bar"></span><span class="badge badge-ok">正常</span></div>
+              <div class="scanrow"><span class="dot dot-ok"></span><span style="width:120px">网卡状态</span><span class="bar"></span><span class="badge badge-ok">正常</span></div>
+              <div class="scanrow"><span class="dot dot-warn"></span><span style="width:120px">代理端口监听</span><span class="bar"></span><span class="badge badge-warn">注意</span></div>
+              <div class="scanrow"><span class="dot dot-ok"></span><span style="width:120px">浏览器扩展痕迹</span><span class="bar"></span><span class="badge badge-ok">正常</span></div>
+            </div>
+            <div class="progress" style="margin-top:auto"><i></i></div>
+            <div class="kv">扫描进度 62% · 已完成 5 / 8 项 · 只读检查，不会修改任何设置</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P-02 -->
+    <div class="board">
+      <div class="board-caption"><span>P-02　修复确认（备份 + 分项勾选）</span><span>1280×800 · 弹窗浮层态</span></div>
+      <div class="canvas wf" style="background:#E5E7EB">
+        <div class="marker" style="top:70px;right:14px">3</div>
+        <div class="marker" style="top:210px;right:14px">4</div>
+        <div class="wf-titlebar"><div class="wf-dot"></div><div class="wf-logo" style="margin-left:8px"></div></div>
+        <div class="wf-body" style="opacity:.45">
+          <div class="wf-side"></div><div class="wf-main"><div class="wf-h"></div></div>
+        </div>
+        <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:74%;background:#fff;border:1px solid var(--wf-line);box-shadow:0 8px 30px rgba(0,0,0,.12)">
+          <div style="padding:12px 16px;border-bottom:1px solid #E5E7EB;font-weight:600;font-size:14px">确认修复 · 修复前将自动备份</div>
+          <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+            <div class="banner">检测到代理软件相关痕迹：修复将关闭系统代理。若你正在使用代理，请先确认是否真的需要修复。</div>
+            <div style="font-size:12px;color:#6B7280">快照保存位置（可更改）：</div>
+            <div style="height:30px;border:1px solid var(--wf-line);background:var(--wf-subtle);display:flex;align-items:center;padding:0 10px;font-size:12px;color:var(--wf-text)">%LocalAppData%\NetFix\backup\20261123-2220\</div>
+            <div style="font-size:12px;color:#6B7280;margin-top:4px">将修复以下项目（取消勾选则不修改该项）：</div>
+            <div class="checkline"><span class="chk on"></span><span>关闭 WinINET 系统代理（当前指向 127.0.0.1:7897，无监听）</span></div>
+            <div class="checkline"><span class="chk on"></span><span>清除残留环境变量代理（HTTP_PROXY / HTTPS_PROXY）</span></div>
+            <div class="checkline"><span class="chk on"></span><span>刷新 DNS 解析缓存</span></div>
+            <div class="checkline"><span class="chk"></span><span>重置 Winsock / TCP-IP（需重启生效，默认不选）</span></div>
+            <div class="checkline"><span class="chk"></span><span>清理虚拟网卡残留 DNS（默认不选）</span></div>
+            <div class="btnrow" style="justify-content:flex-end;margin-top:6px">
+              <div class="btn btn-ghost">取消</div>
+              <div class="btn btn-primary">确认修复（先备份）</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P-03 -->
+    <div class="board">
+      <div class="board-caption"><span>P-03　修复结果与回滚</span><span>1280×800 · 成功态</span></div>
+      <div class="canvas wf">
+        <div class="marker" style="top:70px;right:14px">5</div>
+        <div class="marker" style="top:300px;right:14px">6</div>
+        <div class="wf-titlebar"><div class="wf-dot"></div><div class="wf-logo" style="margin-left:8px"></div></div>
+        <div class="wf-body">
+          <div class="wf-side"><div class="nav active"></div><div class="nav"></div><div class="nav"></div></div>
+          <div class="wf-main">
+            <div class="result-hero">
+              <div class="result-icon">✓</div>
+              <div><div style="font-size:16px;font-weight:600">修复完成</div><div class="kv">共执行 3 项修复 · 1 项需重启生效</div></div>
+              <div class="btn btn-ghost" style="margin-left:auto">导出报告</div>
+            </div>
+            <div class="scanlist">
+              <div class="scanrow"><span class="dot dot-ok"></span><span style="width:150px">系统代理 WinINET</span><span class="bar"></span><span class="badge badge-ok">已关闭</span></div>
+              <div class="scanrow"><span class="dot dot-ok"></span><span style="width:150px">环境变量代理</span><span class="bar"></span><span class="badge badge-ok">已清除</span></div>
+              <div class="scanrow"><span class="dot dot-ok"></span><span style="width:150px">DNS 缓存</span><span class="bar"></span><span class="badge badge-ok">已刷新</span></div>
+            </div>
+            <div style="font-size:12px;color:#6B7280;margin-top:4px">连通性自检：</div>
+            <div class="banner" style="border-color:var(--ok);background:#F0FDFA;color:#0F766E">DNS 解析正常 · HTTPS 访问 baidu.com 成功（HTTP 200）· 浏览器应已恢复</div>
+            <div class="banner">提示：Winsock / TCP-IP 重置需重启电脑后完全生效。</div>
+            <div style="margin-top:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div class="btn btn-danger">一键回滚</div>
+              <div class="btn btn-ghost">重新体检</div>
+              <div class="kv">快照：20261123-2220　（回滚仅恢复本工具修改过的项目）</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 标注说明 -->
+  <div class="note-card">
+    <div class="card-title">标注说明表</div>
+    <div class="note-wrap">
+      <table class="note-table">
+        <thead><tr><th style="width:52px">编号</th><th style="width:110px">页面</th><th style="width:160px">组件 / 区域</th><th>交互规则</th><th>业务规则</th><th>边界状态</th></tr></thead>
+        <tbody>
+          <tr><td>①</td><td>P-01</td><td>「一键体检」主按钮</td><td>点击开始只读扫描</td><td>体检不修改任何系统设置；非管理员亦可用</td><td>扫描中按钮禁用并显示进度条</td></tr>
+          <tr><td>②</td><td>P-01</td><td>通道状态列表</td><td>点击行展开该项依据（当前值/命令输出）</td><td>覆盖 8+ 通道；异常红、注意琥珀、正常青绿</td><td>全部正常时顶部显示绿色汇总条</td></tr>
+          <tr><td>③</td><td>P-02</td><td>备份路径与快照</td><td>显示默认路径，可点击更改</td><td>修复前必须成功生成快照，否则禁止修复</td><td>磁盘写入失败则阻止修复并提示</td></tr>
+          <tr><td>④</td><td>P-02</td><td>修复项勾选清单</td><td>默认勾选推荐项；取消则不改该项</td><td> risky 项（Winsock/TCP-IP、虚拟网卡 DNS）默认不选</td><td>检测到代理进程运行时显示琥珀提示并要求二次确认</td></tr>
+          <tr><td>⑤</td><td>P-03</td><td>连通性自检结果</td><td>修复后自动执行并展示</td><td>自检失败时提示重启/检查网线，不宣称"已恢复"</td><td>完全无网络时显示明确失败原因与下一步</td></tr>
+          <tr><td>⑥</td><td>P-03</td><td>「一键回滚」按钮</td><td>点击从最近快照恢复</td><td>仅回滚本工具修改过的项目，不动其他配置</td><td>无快照时按钮禁用并说明原因</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>原型设计作者 · 微信号：TheSun_Also_Rises</footer>
+</div>
+</body>
+</html>
